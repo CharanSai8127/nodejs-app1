@@ -15,11 +15,18 @@ spec:
         app: service-a-deployment
     spec:
       containers:
-      - image: abhishekf5/demoservice-a:v  # Update with the actual version/tag
-        name: service-a
+      - name: service-a
+        image: abhishekf5/demoservice-a:v  # Update with the actual version/tag
         imagePullPolicy: Always
         ports:
         - containerPort: 3001  # Port where service-a listens
+        resources:
+          requests:
+            memory: "100Mi"
+          limits:
+            memory: "200Mi"
+        command: ["stress"]
+        args: ["--vm", "1", "--vm-bytes", "150M", "--vm-hang", "1"]
         env:
         - name: OTEL_EXPORTER_JAEGER_ENDPOINT
           value: "http://jaeger-collector.tracing:14268/api/traces"

@@ -20,6 +20,15 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 3002  # Port where service-b listens
+        resources:
+          requests:
+            memory: "100Mi"
+            cpu: "100m"
+          limits:
+            memory: "200Mi"
+            cpu: "200m"
+        command: ["stress"]  # Start stress testing in the main container
+        args: ["--cpu", "2", "--timeout", "30s"]  # Adjust parameters as needed
         env:
         - name: OTEL_EXPORTER_JAEGER_ENDPOINT
           value: "http://jaeger-collector.tracing:14268/api/traces"
@@ -30,4 +39,11 @@ spec:
         image: busybox
         command: ['sh', '-c']
         args: ["until nc -z service-a 3001; do echo waiting for service-a; sleep 2; done"]
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "50m"
+          limits:
+            memory: "100Mi"
+            cpu: "100m"
 
