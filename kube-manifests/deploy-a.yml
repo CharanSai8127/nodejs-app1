@@ -23,20 +23,30 @@ spec:
         env:
         - name: OTEL_EXPORTER_JAEGER_ENDPOINT
           value: "http://jaeger-collector.tracing:14268/api/traces"
+        readinessProbe:
+          tcpSocket:
+            port: 3001
+          initialDelaySeconds: 5
+          periodSeconds: 5
         resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
           limits:
             memory: "256Mi"
             cpu: "500m"
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: service-a
+  labels:
+    app: service-a-deployment
 spec:
+  type: ClusterIP      # Change to LoadBalancer or NodePort if needed
+  ports:
+  - port: 3001        # The port exposed by the service
+    targetPort: 3001   # The port on the pod that the service should forward to
   selector:
     app: service-a-deployment
-  ports:
-    - protocol: TCP
-      port: 3001
-      targetPort: 3001
-
